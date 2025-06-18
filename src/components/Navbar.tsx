@@ -1,64 +1,61 @@
 
 import { Link } from 'react-router-dom';
-import { Leaf, ShoppingCart, Package, Settings } from 'lucide-react';
-import { useCart } from '@/contexts/CartContext';
+import { Lightbulb, User, LogIn, Menu } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const Navbar = () => {
-  const { cartItems } = useCart();
-  const cartItemsCount = cartItems.reduce((total, item) => total + item.quantity, 0);
-
   return (
-    <nav className="bg-white shadow-md border-b border-green-100">
+    <nav className="bg-white shadow-md border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <Leaf className="h-8 w-8 text-green-600" />
-            <span className="text-xl font-bold text-gray-900">FreshBulk</span>
+            <Lightbulb className="h-8 w-8 text-blue-600" />
+            <span className="text-xl font-bold text-gray-900">PromptHub</span>
           </Link>
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
             <Link 
               to="/" 
-              className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
               Home
             </Link>
             <Link 
-              to="/place-order" 
-              className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1 relative"
+              to="/#services" 
+              className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
-              <ShoppingCart className="h-4 w-4" />
-              <span>Place Order</span>
-              {cartItemsCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-green-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {cartItemsCount}
-                </span>
-              )}
+              Services
             </Link>
             <Link 
-              to="/track-order" 
-              className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1"
+              to="/browse-prompts" 
+              className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
-              <Package className="h-4 w-4" />
-              <span>Track Order</span>
+              Browse Prompts
             </Link>
-            <Link 
-              to="/admin" 
-              className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1"
-            >
-              <Settings className="h-4 w-4" />
-              <span>Admin</span>
-            </Link>
+            
+            {/* Auth Buttons */}
+            <div className="flex items-center space-x-4">
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/login">
+                  <LogIn className="h-4 w-4 mr-2" />
+                  Login
+                </Link>
+              </Button>
+              <Button asChild size="sm" className="bg-blue-600 hover:bg-blue-700">
+                <Link to="/register">
+                  <User className="h-4 w-4 mr-2" />
+                  Register
+                </Link>
+              </Button>
+            </div>
           </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden">
-            <button className="text-gray-700 hover:text-green-600 p-2">
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+            <button className="text-gray-700 hover:text-blue-600 p-2">
+              <Menu className="h-6 w-6" />
             </button>
           </div>
         </div>
