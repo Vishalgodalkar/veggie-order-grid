@@ -1,26 +1,29 @@
 
 import { useState, useEffect } from 'react';
 import ProductCard from './ProductCard';
+import { Product } from '@/types';
 
 // Mock data - in real app, this would come from API
-const mockProducts = [
-  { id: '1', name: 'Tomatoes', price: 24.50, unit: 'kg' },
-  { id: '2', name: 'Onions', price: 18.00, unit: 'kg' },
-  { id: '3', name: 'Potatoes', price: 15.75, unit: 'kg' },
-  { id: '4', name: 'Carrots', price: 22.00, unit: 'kg' },
-  { id: '5', name: 'Apples', price: 85.00, unit: 'kg' },
-  { id: '6', name: 'Bananas', price: 35.50, unit: 'kg' },
-  { id: '7', name: 'Oranges', price: 45.00, unit: 'kg' },
-  { id: '8', name: 'Spinach', price: 28.00, unit: 'kg' },
-  { id: '9', name: 'Cauliflower', price: 32.00, unit: 'kg' },
-  { id: '10', name: 'Bell Peppers', price: 55.00, unit: 'kg' },
-  { id: '11', name: 'Cucumbers', price: 25.00, unit: 'kg' },
-  { id: '12', name: 'Grapes', price: 95.00, unit: 'kg' }
+const mockProducts: Product[] = [
+  { id: '1', name: 'Tomatoes', price: 24.50, unit: 'kg', minQuantity: 5, description: 'Fresh red tomatoes, perfect for cooking and salads' },
+  { id: '2', name: 'Onions', price: 18.00, unit: 'kg', minQuantity: 10, description: 'Premium quality onions, essential for every kitchen' },
+  { id: '3', name: 'Potatoes', price: 15.75, unit: 'kg', minQuantity: 10, description: 'Farm-fresh potatoes, great for multiple dishes' },
+  { id: '4', name: 'Carrots', price: 22.00, unit: 'kg', minQuantity: 5, description: 'Sweet and crunchy carrots, rich in vitamins' },
+  { id: '5', name: 'Apples', price: 85.00, unit: 'kg', minQuantity: 3, description: 'Crisp and juicy apples, perfect for snacking' },
+  { id: '6', name: 'Bananas', price: 35.50, unit: 'kg', minQuantity: 5, description: 'Ripe bananas, great source of potassium' },
+  { id: '7', name: 'Oranges', price: 45.00, unit: 'kg', minQuantity: 5, description: 'Juicy oranges packed with vitamin C' },
+  { id: '8', name: 'Spinach', price: 28.00, unit: 'kg', minQuantity: 2, description: 'Fresh leafy spinach, rich in iron and nutrients' },
+  { id: '9', name: 'Cauliflower', price: 32.00, unit: 'kg', minQuantity: 3, description: 'Fresh cauliflower heads, versatile vegetable' },
+  { id: '10', name: 'Bell Peppers', price: 55.00, unit: 'kg', minQuantity: 2, description: 'Colorful bell peppers, adds crunch to dishes' },
+  { id: '11', name: 'Cucumbers', price: 25.00, unit: 'kg', minQuantity: 3, description: 'Fresh cucumbers, perfect for salads' },
+  { id: '12', name: 'Grapes', price: 95.00, unit: 'kg', minQuantity: 2, description: 'Sweet grapes, perfect for snacking' }
 ];
 
 const ProductGrid = () => {
-  const [products, setProducts] = useState(mockProducts);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState<'name' | 'price'>('name');
 
   // Simulate API call - replace with actual API call later
   useEffect(() => {
@@ -34,6 +37,17 @@ const ProductGrid = () => {
 
     fetchProducts();
   }, []);
+
+  // Filter and sort products
+  const filteredProducts = products
+    .filter(product =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (sortBy === 'name') return a.name.localeCompare(b.name);
+      if (sortBy === 'price') return a.price - b.price;
+      return 0;
+    });
 
   if (loading) {
     return (
@@ -65,17 +79,36 @@ const ProductGrid = () => {
           </p>
         </div>
 
+        {/* Search and Filter */}
+        <div className="mb-8 flex flex-col sm:flex-row gap-4 justify-between items-center">
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 w-full sm:w-64"
+          />
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as 'name' | 'price')}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+          >
+            <option value="name">Sort by Name</option>
+            <option value="price">Sort by Price</option>
+          </select>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              id={product.id}
-              name={product.name}
-              price={product.price}
-              unit={product.unit}
-            />
+          {filteredProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
+
+        {filteredProducts.length === 0 && searchTerm && (
+          <div className="text-center py-12">
+            <p className="text-gray-600">No products found matching "{searchTerm}"</p>
+          </div>
+        )}
 
         {/* Call to Action */}
         <div className="text-center mt-12">

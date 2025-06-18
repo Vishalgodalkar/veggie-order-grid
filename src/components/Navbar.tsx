@@ -1,8 +1,12 @@
 
 import { Link } from 'react-router-dom';
 import { Leaf, ShoppingCart, Package, Settings } from 'lucide-react';
+import { useCart } from '@/contexts/CartContext';
 
 const Navbar = () => {
+  const { cartItems } = useCart();
+  const cartItemsCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+
   return (
     <nav className="bg-white shadow-md border-b border-green-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -23,10 +27,15 @@ const Navbar = () => {
             </Link>
             <Link 
               to="/place-order" 
-              className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1"
+              className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1 relative"
             >
               <ShoppingCart className="h-4 w-4" />
               <span>Place Order</span>
+              {cartItemsCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-green-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {cartItemsCount}
+                </span>
+              )}
             </Link>
             <Link 
               to="/track-order" 
